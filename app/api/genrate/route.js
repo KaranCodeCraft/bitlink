@@ -18,6 +18,13 @@ export async function POST(request) {
     const db = client.db("bitlinks");
     const collection = db.collection("url");
 
+    if(await collection.findOne({shortUrl: body.shortUrl})){
+      return new Response(JSON.stringify({message: "URL already exists"}),{
+        status: 409,
+        headers: { "Content-Type": "application/json" },
+      })
+    }
+
     // Insert the URL data into the collection
     const result = await collection.insertOne({
       url: body.url,
